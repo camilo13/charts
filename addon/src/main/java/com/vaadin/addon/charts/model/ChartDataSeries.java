@@ -44,12 +44,12 @@ public class ChartDataSeries<T> extends AbstractSeries {
     public static final String CLOSE_PROPERTY = "close";
 
     @JsonIgnore
-    private final Map<String, Function<T, Object>> chartAttriubteToCallback;
+    private final Map<String, Function<T, ? extends Object>> chartAttriubteToCallback;
 
 
     public ChartDataSeries(DataSource<T> ds) {
         vaadinDS = ds;
-        chartAttriubteToCallback = new HashMap<String, Function<T, Object>>();
+        chartAttriubteToCallback = new HashMap<>();
     }
 
     /**
@@ -65,7 +65,7 @@ public class ChartDataSeries<T> extends AbstractSeries {
      * Sets mapping for X chart property to value.
      * @param callBack
      */
-    public void setXValueProvider(Function<T, Object> callBack) {
+    public void setXValueProvider(Function<T, Number> callBack) {
         chartAttriubteToCallback.put(SERIES_DEFAULT_ATTRIBUTE1, callBack);
     }
 
@@ -73,7 +73,7 @@ public class ChartDataSeries<T> extends AbstractSeries {
      * Sets mapping for Y chart property to value.
      * @param callBack
      */
-    public void setYValueProvider(Function<T, Object> callBack) {
+    public void setYValueProvider(Function<T, Number> callBack) {
         chartAttriubteToCallback.put(SERIES_DEFAULT_ATTRIBUTE2, callBack);
     }
 
@@ -81,7 +81,7 @@ public class ChartDataSeries<T> extends AbstractSeries {
      * Sets mapping for name chart property to value.
      * @param callBack
      */
-    public void setNameProvider(Function<T, Object> callBack) {
+    public void setNameProvider(Function<T, String> callBack) {
         chartAttriubteToCallback.put(NAME_ATTRIBUTE, callBack);
     }
 
@@ -89,28 +89,28 @@ public class ChartDataSeries<T> extends AbstractSeries {
      * Sets mapping for low chart property to value.
      * @param callBack
      */
-    public void setLowDataProvider(Function<T, Object> callBack) {
+    public void setLowDataProvider(Function<T, Number> callBack) {
         chartAttriubteToCallback.put(LOW_PROPERTY, callBack);
     }
     /**
      * Sets mapping for high chart property to value.
      * @param callBack
      */
-    public void setHighDataProvider(Function<T, Object> callBack) {
+    public void setHighDataProvider(Function<T, Number> callBack) {
         chartAttriubteToCallback.put(HIGH_PROPERTY, callBack);
     }
     /**
      * Sets mapping for open chart property to value.
      * @param callBack
      */
-    public void setOpenDataProvider(Function<T, Object> callBack) {
+    public void setOpenDataProvider(Function<T, Number> callBack) {
         chartAttriubteToCallback.put(OPEN_PROPERTY, callBack);
     }
     /**
      * Sets mapping for high chart property to value.
      * @param callBack
      */
-    public void setCloseDataProvider(Function<T, Object> callBack) {
+    public void setCloseDataProvider(Function<T, Number> callBack) {
         chartAttriubteToCallback.put(CLOSE_PROPERTY, callBack);
     }
     /**
@@ -129,7 +129,7 @@ public class ChartDataSeries<T> extends AbstractSeries {
      * @return mappings between chart attributes (keys) and property IDs
      * (values) in the container
      */
-    public Map<String, Function<T, Object>> getAttributeToPropertyIdMap() {
+    public Map<String, Function<T, ? extends Object>> getAttributeToPropertyIdMap() {
         return chartAttriubteToCallback;
     }
 
@@ -142,7 +142,7 @@ public class ChartDataSeries<T> extends AbstractSeries {
     public List<Map<String, Object>> getValues() {
         List<Map<String, Object>> list = vaadinDS.fetch(new Query()).map((item) -> {
             Map<String, Object> tmp = new HashMap<String, Object>();
-            for (Map.Entry<String, Function<T, Object>> entry : chartAttriubteToCallback.entrySet()) {
+            for (Map.Entry<String, Function<T, ? extends Object>> entry : chartAttriubteToCallback.entrySet()) {
                 String key = entry.getKey();
                 Object value = entry.getValue().apply(item);
                 tmp.put(key, value);
